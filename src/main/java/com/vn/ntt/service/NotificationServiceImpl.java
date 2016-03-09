@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by bangnl on 3/9/16.
@@ -21,10 +20,10 @@ import java.util.Map;
 @Service
 public class NotificationServiceImpl implements NotificationService{
 
-    @Value("#{"+ SystemConstant.AUTHORIZATION+"}")
+    @Value("${"+SystemConstant.AUTHORIZATION+"}")
     private String authorizationKey;
 
-    @Value("{"+SystemConstant.SERVER_GCM+"}")
+    @Value("${"+SystemConstant.SERVER_GCM+"}")
     private String serverGCM;
 
     @Override

@@ -1,9 +1,10 @@
 package com.vn.ntt.service;
 
+import com.vn.ntt.entity.Buddy;
 import com.vn.ntt.repository.BuddyRepository;
 import com.vn.ntt.until.MeasureUntil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.vn.ntt.entity.Buddy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
         if(buddy == null){
             throw new IllegalArgumentException("buddy must not empty");
         }
-        if(buddy.getLat() == null || buddy.getLon() == null){
+        if(ArrayUtils.isEmpty(buddy.getLocation())){
             throw new IllegalArgumentException("lat or lon must not empty");
         }
 
@@ -40,7 +41,7 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
             throw  new IllegalArgumentException("radius must not empty");
         }
 
-        Point point = new Point(buddy.getLat(), buddy.getLon());
+        Point point = new Point(buddy.getLocation()[0], buddy.getLocation()[1]);
         Distance distance = MeasureUntil.getDistanceByMet(buddy.getRadius());
         return this.buddyRepository.findByLocationNear(point, distance);
     }
