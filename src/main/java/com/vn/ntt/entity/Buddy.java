@@ -1,10 +1,10 @@
 package com.vn.ntt.entity;
 
 import com.vn.ntt.enums.Status;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,17 +13,12 @@ import java.util.List;
  */
 
 @Document
-public class Buddy extends Model{
+public class Buddy extends Model {
     private String token;
     private String name;
-    private Double lat;
-    private Double lon;
+    private double[] location ;
     private Date lastUpTime;
-
-    @Transient
     private Status status;
-
-    @Transient
     private Double radius;
 
     @DBRef
@@ -45,20 +40,12 @@ public class Buddy extends Model{
         this.name = name;
     }
 
-    public Double getLat() {
-        return lat;
+    public double[] getLocation() {
+        return location;
     }
 
-    public void setLat(Double lat) {
-        this.lat = lat;
-    }
-
-    public Double getLon() {
-        return lon;
-    }
-
-    public void setLon(Double lon) {
-        this.lon = lon;
+    public void setLocation(double[] location) {
+        this.location = location;
     }
 
     public Date getLastUpTime() {
@@ -83,5 +70,13 @@ public class Buddy extends Model{
 
     public void setRadius(Double radius) {
         this.radius = radius;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
