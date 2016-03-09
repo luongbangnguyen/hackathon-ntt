@@ -59,7 +59,6 @@ public class NotificationServiceImpl implements NotificationService{
     private void sendDataToserverGCM(Buddy data, String tokenReceiver){
         HttpHeaders headers =getHeaders();
         RestTemplate template = new RestTemplate();
-        Message<Buddy> message = new Message<>(tokenReceiver, data);
         this.sendDataToserverGCM(data, headers,template,tokenReceiver);
     }
 
