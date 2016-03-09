@@ -29,8 +29,12 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public boolean notificationListBuddy(Buddy sender, List<Buddy> receivers) {
 
+        if(sender == null){
+            throw new IllegalArgumentException("sender can not null");
+        }
+
         if(CollectionUtils.isEmpty(receivers)){
-            throw new IllegalArgumentException("list receivers can not null");
+            return true;
         }
 
         RestTemplate template = new RestTemplate();
