@@ -1,16 +1,23 @@
 package com.vn.ntt.service;
 
+import com.google.common.collect.Lists;
+import com.mysema.query.BooleanBuilder;
 import com.vn.ntt.entity.Buddy;
+import com.vn.ntt.entity.QBuddy;
 import com.vn.ntt.repository.BuddyRepository;
 import com.vn.ntt.until.MeasureUntil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.*;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.vn.ntt.constant.SystemConstant.BUDDY_LIST_EMPTY;
 
 /**
  * Created by bangnl on 3/9/2016.
@@ -19,7 +26,7 @@ import java.util.List;
 @Transactional
 public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements BuddyService{
 
-    private BuddyRepository buddyRepository;
+    private final BuddyRepository buddyRepository;
 
     @Autowired
     public BuddyServiceImpl( BuddyRepository buddyRepository){
@@ -59,5 +66,23 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
            buddyResult = this.buddyRepository.save(buddy);
         }
         return buddyResult;
+    }
+
+    @Override
+    public List<Buddy> findByArrayHashtag(Buddy buddy) {
+        if(buddy == null){
+            throw new IllegalArgumentException("buddy must not null");
+        }
+
+        if(CollectionUtils.isEmpty(buddy.getHashtag())){
+            return BUDDY_LIST_EMPTY;
+        }
+        BooleanBuilder builder = new BooleanBuilder();
+        List<String> hashtags = buddy.getHashtag();
+
+        for(String str : hashtags){
+            builder.or(QBuddy.buddy.hashtag.contains(str));
+        }
+        return Lists.newArrayList(this.buddyRepository.findAll(builder));
     }
 }

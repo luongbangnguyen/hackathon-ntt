@@ -53,6 +53,7 @@ dependencies {
     compile('com.mysema.querydsl:querydsl-apt:3.6.4')
     compile('com.mysema.querydsl:querydsl-mongodb:3.6.4')
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    compile 'com.google.guava:guava:19.0'
 
 }
 

@@ -1,6 +1,7 @@
 package com.vn.ntt.entity;
 
 import com.vn.ntt.enums.Status;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,11 +19,13 @@ public class Buddy extends Model {
     private String name;
     private double[] location ;
     private Date lastUpTime;
-    private Status status;
-    private Double radius;
+    private List<String> hashtag;
 
-    @DBRef
-    private List<Hash> hashList;
+    @Transient
+    private Status status;
+
+    @Transient
+    private Double radius;
 
     public String getToken() {
         return token;
@@ -56,14 +59,6 @@ public class Buddy extends Model {
         this.lastUpTime = lastUpTime;
     }
 
-    public List<Hash> getHashList() {
-        return hashList;
-    }
-
-    public void setHashList(List<Hash> hashList) {
-        this.hashList = hashList;
-    }
-
     public Double getRadius() {
         return radius;
     }
@@ -78,5 +73,13 @@ public class Buddy extends Model {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public List<String> getHashtag() {
+        return hashtag;
+    }
+
+    public void setHashtag(List<String> hashtag) {
+        this.hashtag = hashtag;
     }
 }

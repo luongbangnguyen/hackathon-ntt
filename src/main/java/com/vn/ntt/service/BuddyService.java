@@ -25,5 +25,11 @@ public interface BuddyService extends ModelService<Buddy>{
      */
     Buddy findAndRegisterBuddy(Buddy buddy);
 
-
+    /**
+     * find list buddy have same hashtag in a buddy
+     *
+     * @param buddy
+     * @return
+     */
+    List<Buddy> findByArrayHashtag(Buddy buddy);
 }
