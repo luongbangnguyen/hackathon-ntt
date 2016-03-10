@@ -4,7 +4,6 @@ import com.vn.ntt.entity.Buddy;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 import java.util.List;
