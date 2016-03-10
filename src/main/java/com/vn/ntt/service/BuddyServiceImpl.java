@@ -3,6 +3,7 @@ package com.vn.ntt.service;
 import com.google.common.collect.Lists;
 import com.mysema.query.BooleanBuilder;
 import com.vn.ntt.entity.Buddy;
+import com.vn.ntt.entity.Hashtag;
 import com.vn.ntt.entity.QBuddy;
 import com.vn.ntt.repository.BuddyRepository;
 import com.vn.ntt.until.MeasureUntil;
@@ -74,14 +75,14 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
             throw new IllegalArgumentException("buddy must not null");
         }
 
-        if(CollectionUtils.isEmpty(buddy.getHashtag())){
+        if(CollectionUtils.isEmpty(buddy.getHashtags())){
             return BUDDY_LIST_EMPTY;
         }
         BooleanBuilder builder = new BooleanBuilder();
-        List<String> hashtags = buddy.getHashtag();
+        List<Hashtag> hashtags = buddy.getHashtags();
 
-        for(String str : hashtags){
-            builder.or(QBuddy.buddy.hashtag.contains(str));
+        for(Hashtag has : hashtags){
+            builder.or(QBuddy.buddy.hashtags.any().hash.contains(has.getHash()));
         }
         return Lists.newArrayList(this.buddyRepository.findAll(builder));
     }

@@ -1,6 +1,7 @@
 package com.vn.ntt.constant;
 
 import com.vn.ntt.entity.Buddy;
+import com.vn.ntt.entity.Hashtag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,4 +13,6 @@ public class SystemConstant {
     public final static String AUTHORIZATION = "com.vn.ntt.authorization.key";
     public final static String SERVER_GCM = "com.vn.ntt.server.gcm";
     public final static List<Buddy> BUDDY_LIST_EMPTY = new ArrayList<>();
+    public final static List<Hashtag> HASHTAG_LIST_EMPTY = new ArrayList<>();
+    public final static int LIMIT_DEFAULT = 10;
 }
