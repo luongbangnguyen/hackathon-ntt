@@ -1,6 +1,7 @@
 package com.vn.ntt.service;
 
 import com.vn.ntt.entity.Buddy;
+import com.vn.ntt.enums.PokeType;
 
 import java.util.List;
 
@@ -17,6 +18,24 @@ public interface BuddyService extends ModelService<Buddy>{
      */
     List<Buddy> findByLocationWithin(Buddy buddy);
 
+
+    /**
+     * update location for
+     * @param buddy
+     * @return
+     */
+    boolean updateLocation(Buddy buddy);
+
+    /**
+     * poke another buddy
+     * @param tokenSend
+     * @param tokenReceive
+     * @param pokeType
+     * @return
+     */
+    boolean pokeOrAccept(String tokenSend, String tokenReceive, PokeType pokeType);
+
+
     /**
      * return a buddy if exist in database vice versa save and return a buddy
      *
@@ -32,4 +51,20 @@ public interface BuddyService extends ModelService<Buddy>{
      * @return
      */
     List<Buddy> findByArrayHashtag(Buddy buddy);
+
+    /**
+     * find Buddy by token
+     * @param token
+     * @return
+     */
+    Buddy findByToken(String token);
+
+    /**
+     *
+     *
+     * @param buddy
+     * @return
+     */
+    List<Buddy> serverSendBuddy(Buddy buddy);
+
 }

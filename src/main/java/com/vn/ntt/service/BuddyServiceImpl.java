@@ -2,9 +2,11 @@ package com.vn.ntt.service;
 
 import com.google.common.collect.Lists;
 import com.mysema.query.BooleanBuilder;
+import com.vn.ntt.constant.SystemConstant;
 import com.vn.ntt.entity.Buddy;
 import com.vn.ntt.entity.Hashtag;
 import com.vn.ntt.entity.QBuddy;
+import com.vn.ntt.enums.PokeType;
 import com.vn.ntt.repository.BuddyRepository;
 import com.vn.ntt.until.MeasureUntil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,10 +31,14 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
 
     private final BuddyRepository buddyRepository;
 
+    private final NotificationService notifiSv;
+
+
     @Autowired
-    public BuddyServiceImpl( BuddyRepository buddyRepository){
+    public BuddyServiceImpl( BuddyRepository buddyRepository, NotificationService notifiSv){
         super(buddyRepository);
         this.buddyRepository = buddyRepository;
+        this.notifiSv = notifiSv;
     }
 
     @Override
@@ -46,7 +52,7 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
         }
 
         if(buddy.getRadius() == null){
-            throw  new IllegalArgumentException("radius must not empty");
+            buddy.setRadius(SystemConstant.DISTANCE_DEFAULT);
         }
 
         Point point = new Point(buddy.getLocation()[0], buddy.getLocation()[1]);
@@ -85,5 +91,51 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
             builder.or(QBuddy.buddy.hashtags.any().hash.contains(has.getHash()));
         }
         return Lists.newArrayList(this.buddyRepository.findAll(builder));
+    }
+
+    @Override
+    public boolean updateLocation(Buddy buddy) {
+        if(buddy == null){
+            throw new IllegalArgumentException("buddy must not null");
+        }
+
+        if(StringUtils.isBlank(buddy.getToken())){
+            throw new IllegalArgumentException("token of buddy must not empty");
+        }
+
+        Buddy buddyUpdate = this.buddyRepository.findByToken(buddy.getToken());
+        buddyUpdate.setLocation(buddy.getLocation());
+        buddyUpdate.setRadius(buddy.getRadius());
+        this.buddyRepository.save(buddyUpdate);
+        return true;
+
+    }
+
+    @Override
+    public boolean pokeOrAccept(String tokenSend, String tokenReceive, PokeType pokeType) {
+        Buddy sender = this.buddyRepository.findByToken(tokenSend);
+        sender.setPokeType(pokeType);
+        this.notifiSv.notificationToOneBuddy(sender, tokenReceive);
+        return false;
+
+    }
+
+    @Override
+    public Buddy findByToken(String token) {
+        if(StringUtils.isBlank(token)){
+            throw new IllegalArgumentException("token must not empty");
+        }
+        return this.buddyRepository.findByToken(token);
+
+    }
+
+    @Override
+    public List<Buddy> serverSendBuddy(Buddy buddy) {
+        List<Buddy> buddies = this.findByLocationWithin(buddy);
+        if(CollectionUtils.isEmpty(buddies)){
+            return  buddies;
+        }
+        this.notifiSv.notificationListBuddy(buddy, buddies);
+        return buddies;
     }
 }

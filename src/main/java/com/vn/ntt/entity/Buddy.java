@@ -1,6 +1,6 @@
 package com.vn.ntt.entity;
 
-import com.vn.ntt.enums.Status;
+import com.vn.ntt.enums.PokeType;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,10 +21,13 @@ public class Buddy extends Model {
     private List<Hashtag> hashtags;
 
     @Transient
-    private Status status;
+    private PokeType pokeType;
 
     @Transient
     private Double radius;
+
+    @Transient
+    private Double distance;
 
     public String getToken() {
         return token;
@@ -66,12 +69,12 @@ public class Buddy extends Model {
         this.radius = radius;
     }
 
-    public Status getStatus() {
-        return status;
+    public PokeType getPokeType() {
+        return pokeType;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setPokeType(PokeType pokeType) {
+        this.pokeType = pokeType;
     }
 
     public List<Hashtag> getHashtags() {
@@ -80,5 +83,13 @@ public class Buddy extends Model {
 
     public void setHashtags(List<Hashtag> hashtags) {
         this.hashtags = hashtags;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
     }
 }

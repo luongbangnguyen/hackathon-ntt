@@ -46,8 +46,8 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    public boolean notificationToOneBuddy(Buddy sender, Buddy receiver) {
-        sendDataToserverGCM(sender,receiver.getToken());
+    public boolean notificationToOneBuddy(Buddy sender, String tokenReceive) {
+        sendDataToserverGCM(sender,tokenReceive);
         return true;
     }
 

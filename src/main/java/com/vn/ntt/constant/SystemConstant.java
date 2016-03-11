@@ -15,4 +15,5 @@ public class SystemConstant {
     public final static List<Buddy> BUDDY_LIST_EMPTY = new ArrayList<>();
     public final static List<Hashtag> HASHTAG_LIST_EMPTY = new ArrayList<>();
     public final static int LIMIT_DEFAULT = 10;
+    public final static double DISTANCE_DEFAULT = 20;
 }

@@ -23,8 +23,8 @@ public interface NotificationService {
      * notification for one buddies
      *
      * @param sender
-     * @param receiver
+     * @param tokenReceive
      * @return
      */
-    boolean notificationToOneBuddy(Buddy sender, Buddy receiver);
+    boolean notificationToOneBuddy(Buddy sender, String tokenReceive);
 }
