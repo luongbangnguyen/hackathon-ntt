@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -15,6 +16,8 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 /**
  * Created by bangnl on 3/11/16.
  */
+
+@Service
 public class HashtagServiceImpl implements HashtagService{
 
     @Autowired
@@ -29,12 +32,7 @@ public class HashtagServiceImpl implements HashtagService{
         if(StringUtils.isBlank(hash)) {
             return this.hashtagRepository.findAll(getPageDefault("hash")).getContent();
         }
-
-        Query query = new Query(where("hashtag.hash")
-                .regex("/.*"+hash+".*/"))
-                .with(getPageDefault("hash"));
-
-        return mongoTemplate.find(query,Hashtag.class);
+        return this.hashtagRepository.findByHashContaining(hash, getPageDefault("hash"));
     }
 
 }

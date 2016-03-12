@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Date;
+
 /**
  * Created by bangl on 2/25/16.
  */
@@ -22,6 +24,7 @@ public class ModelServiceImpl<T extends Model> implements ModelService<T>{
         if(t == null){
             throw new IllegalArgumentException("model must not empty");
         }
+        t.setLastUpTime(new Date());
         return repository.save(t);
     }
 

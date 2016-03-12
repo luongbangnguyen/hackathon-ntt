@@ -2,6 +2,7 @@ package com.vn.ntt.entity;
 
 import com.vn.ntt.enums.PokeType;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -15,8 +16,7 @@ import java.util.List;
 public class Buddy extends Model {
     private String token;
     private String name;
-    private double[] location ;
-    private Date lastUpTime;
+    private double[] location;
 
     private List<Hashtag> hashtags;
 
@@ -51,14 +51,6 @@ public class Buddy extends Model {
 
     public void setLocation(double[] location) {
         this.location = location;
-    }
-
-    public Date getLastUpTime() {
-        return lastUpTime;
-    }
-
-    public void setLastUpTime(Date lastUpTime) {
-        this.lastUpTime = lastUpTime;
     }
 
     public Double getRadius() {

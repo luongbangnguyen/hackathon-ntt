@@ -67,4 +67,18 @@ public interface BuddyService extends ModelService<Buddy>{
      */
     List<Buddy> serverSendBuddy(Buddy buddy);
 
+    /**
+     *
+     * @param buddy
+     * @return
+     */
+    List<Buddy> getListBuddySameHashtag(Buddy buddy);
+
+    /**
+     *
+     * @param buddy
+     * @return
+     */
+    Buddy registerBuddy(Buddy buddy);
+
 }

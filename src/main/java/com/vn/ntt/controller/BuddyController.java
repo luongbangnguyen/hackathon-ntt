@@ -26,9 +26,8 @@ public class BuddyController {
 	 * @return
 	 */
 	@RequestMapping(path = "register",method = RequestMethod.POST)
-	public boolean addBuddy(@RequestBody Buddy buddy){
-		this.buddySv.save(buddy);
-		return true;
+	public Buddy addBuddy(@RequestBody Buddy buddy){
+		return  buddySv.registerBuddy(buddy);
 	}
 
 	@RequestMapping(path = "update-location",method = RequestMethod.PUT)
@@ -37,7 +36,7 @@ public class BuddyController {
 	}
 
 	@RequestMapping(path = "poke-accept", method = RequestMethod.POST)
-	public boolean pokeOrAccept(@RequestBody String tokenSend,
+	public boolean pokeOrAccept(@RequestParam String tokenSend,
 								@RequestParam String tokenReceive,
 								@RequestParam PokeType pokeType){
 		return this.buddySv.pokeOrAccept(tokenSend, tokenReceive, pokeType);
@@ -51,7 +50,7 @@ public class BuddyController {
 
 	@RequestMapping(path = "get-list-buddy", method = RequestMethod.POST)
 	public List<Buddy> getListBuddy(@RequestBody Buddy buddy){
-		return this.buddySv.findByLocationWithin(buddy);
+		return this.buddySv.getListBuddySameHashtag(buddy);
 	}
 
 
@@ -60,4 +59,8 @@ public class BuddyController {
         return this.serverSendBuddy(buddy);
     }
 
+	@RequestMapping(path = "test")
+	public String test() {
+		return "ok";
+	}
 }
