@@ -29,4 +29,5 @@ public interface BuddyRepository extends MongoRepository<Buddy,String>, QueryDsl
      * @return
      */
     Buddy findByToken(String token);
+
 }

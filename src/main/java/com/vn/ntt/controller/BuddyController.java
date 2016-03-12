@@ -39,6 +39,7 @@ public class BuddyController {
 	public boolean pokeOrAccept(@RequestParam String tokenSend,
 								@RequestParam String tokenReceive,
 								@RequestParam PokeType pokeType){
+		System.out.print(pokeType);
 		return this.buddySv.pokeOrAccept(tokenSend, tokenReceive, pokeType);
 	}
 

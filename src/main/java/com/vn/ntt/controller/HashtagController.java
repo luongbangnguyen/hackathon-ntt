@@ -20,7 +20,7 @@ public class HashtagController {
     private HashtagService hashtagService;
 
     @RequestMapping("get-list-hash")
-    public List<Hashtag> getListHash(@RequestParam String keyword){
+    public List<String> getListHash(@RequestParam(required = false) String keyword){
         return hashtagService.findByHash(keyword);
     }
 

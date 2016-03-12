@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.vn.ntt.until.PageUntil.getPageDefault;
@@ -27,12 +28,18 @@ public class HashtagServiceImpl implements HashtagService{
     MongoTemplate mongoTemplate;
 
     @Override
-    public List<Hashtag> findByHash(String hash) {
+    public List<String> findByHash(String hash) {
 
         if(StringUtils.isBlank(hash)) {
-            return this.hashtagRepository.findAll(getPageDefault("hash")).getContent();
+            return converListHashtagToListString(this.hashtagRepository.findAll());
         }
-        return this.hashtagRepository.findByHashContaining(hash, getPageDefault("hash"));
+        return converListHashtagToListString(this.hashtagRepository.findByHashContaining(hash, getPageDefault("hash")));
+    }
+
+    private List<String> converListHashtagToListString(List<Hashtag> hashtags){
+        List<String> strs = new ArrayList<>();
+        hashtags.forEach(hashtag -> strs.add(hashtag.getHash()));
+        return strs;
     }
 
 }

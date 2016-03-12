@@ -22,8 +22,10 @@ import  static com.vn.ntt.until.MeasureUntil.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.vn.ntt.constant.SystemConstant.BUDDY_LIST_EMPTY;
+import static com.vn.ntt.until.PageUntil.getPageDefault;
 
 /**
  * Created by bangnl on 3/9/2016.
@@ -97,7 +99,7 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
         for(Hashtag has : hashtags){
             builder.or(QBuddy.buddy.hashtags.any().hash.contains(has.getHash()));
         }
-        return Lists.newArrayList(this.buddyRepository.findAll(builder));
+        return Lists.newArrayList(this.buddyRepository.findAll(builder,getPageDefault("name")));
     }
 
     @Override
@@ -151,16 +153,23 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
 
     @Override
     public List<Buddy> getListBuddySameHashtag(Buddy buddy) {
+        if(ArrayUtils.isEmpty(buddy.getLocation())){
+            List<Buddy> buddies = this.buddyRepository.findAll();
+            return buddies.stream().filter(bd -> {
+                return  !StringUtils.equals(bd.getToken(),buddy.getToken());
+            }).collect(Collectors.toList());
+            // return this.findByArrayHashtag(buddy);
+        }
         StringBuffer hasBf = new StringBuffer();
         for(Hashtag has : buddy.getHashtags()){
             hasBf.append(has.getHash());
         }
+
         Buddy buddyData = this.findByToken(buddy.getToken());
         List<Buddy> buddies = this.findByLocationWithin(buddy);
-        buddies.stream().filter(bd -> {
-            return compareHashtag(hasBf.toString(), bd);
-        });
-        return buddies;
+        return buddies.stream().filter(bd -> {
+            return compareHashtag(hasBf.toString(), bd) && !StringUtils.equals(bd.getToken(),buddy.getToken());
+        }).collect(Collectors.toList());
     }
 
     private boolean compareHashtag(String hash,Buddy bd){
@@ -174,25 +183,15 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
         return check;
     }
 
-    @Override
-    public Buddy registerBuddy(Buddy buddy) {
-        super.save(buddy);
-        if(CollectionUtils.isEmpty(buddy.getHashtags())){
+        @Override
+        public Buddy registerBuddy(Buddy buddy) {
+            Buddy buddydb = this.findByToken(buddy.getToken());
+            if(buddydb != null){
+                buddydb.setHashtags(buddy.getHashtags());
+                super.save(buddydb);
+                return buddydb;
+            }
+            super.save(buddy);
             return buddy;
         }
-        for(Hashtag hash : buddy.getHashtags()){
-            saveIfHashNotExist(hash);
-        }
-        return buddy;
-    }
-
-    private boolean saveIfHashNotExist(Hashtag hash){
-        Hashtag hashDb = this.hashtagRepository.findByHash(hash.getHash());
-        if(hashDb != null && StringUtils.isNoneBlank(hashDb.getHash())){
-            return true;
-        }
-        hash.setLastUpTime(new Date());
-        this.hashtagRepository.save(hash);
-        return true;
-    }
 }

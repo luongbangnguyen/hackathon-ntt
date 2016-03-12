@@ -15,5 +15,5 @@ public interface HashtagService {
      * @param hash
      * @return
      */
-    List<Hashtag> findByHash(String hash);
+    List<String> findByHash(String hash);
 }

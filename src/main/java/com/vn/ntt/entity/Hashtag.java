@@ -8,6 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Hashtag extends Model{
 
+    public Hashtag(){}
+    public Hashtag(String hash, String type){
+        this.hash = hash;
+        this.type = type;
+    }
     private String hash;
 
     private String type;
