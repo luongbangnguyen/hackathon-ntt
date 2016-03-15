@@ -1,11 +1,9 @@
 package com.vn.ntt.controller;
 
 import com.vn.ntt.entity.Buddy;
-import com.vn.ntt.entity.Hashtag;
 import com.vn.ntt.enums.PokeType;
 import com.vn.ntt.service.BuddyService;
 import com.vn.ntt.service.HashtagService;
-import com.vn.ntt.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,11 +1,8 @@
 package com.vn.ntt.service;
 
-import com.google.common.collect.Lists;
-import com.mysema.query.BooleanBuilder;
 import com.vn.ntt.constant.SystemConstant;
 import com.vn.ntt.entity.Buddy;
 import com.vn.ntt.entity.Hashtag;
-import com.vn.ntt.entity.QBuddy;
 import com.vn.ntt.enums.PokeType;
 import com.vn.ntt.repository.BuddyRepository;
 import com.vn.ntt.repository.HashtagRepository;
@@ -16,16 +13,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import  static com.vn.ntt.until.MeasureUntil.*;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.vn.ntt.constant.SystemConstant.BUDDY_LIST_EMPTY;
-import static com.vn.ntt.until.PageUntil.getPageDefault;
+import static com.vn.ntt.until.MeasureUntil.getDistance;
 
 /**
  * Created by bangnl on 3/9/2016.
@@ -39,6 +36,9 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
     private final NotificationService notifiSv;
 
     private final HashtagRepository hashtagRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
 
     @Autowired
@@ -64,9 +64,29 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
             buddy.setRadius(SystemConstant.DISTANCE_DEFAULT);
         }
 
-        Point point = new Point(buddy.getLocation()[0], buddy.getLocation()[1]);
-        Distance distance = MeasureUntil.getDistanceByMet(buddy.getRadius());
-        return this.buddyRepository.findByLocationNear(point, distance);
+        DtoForPointAndDistance pointAndDistance = new DtoForPointAndDistance(buddy);
+        return this.buddyRepository.findByLocationNear(pointAndDistance.getPoint(), pointAndDistance.getDistance());
+    }
+
+    /**
+     * DTO for point and distance
+     *
+     * **/
+    private static class DtoForPointAndDistance{
+        private Point point;
+        private Distance distance;
+        DtoForPointAndDistance(Buddy buddy){
+            Point point = new Point(buddy.getLocation()[0], buddy.getLocation()[1]);
+            Distance distance = MeasureUntil.getDistanceByMet(buddy.getRadius());
+        }
+
+        private Point getPoint() {
+            return point;
+        }
+
+        private Distance getDistance() {
+            return distance;
+        }
     }
 
     @Override
@@ -93,13 +113,15 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
         if(CollectionUtils.isEmpty(buddy.getHashtags())){
             return BUDDY_LIST_EMPTY;
         }
-        BooleanBuilder builder = new BooleanBuilder();
-        List<Hashtag> hashtags = buddy.getHashtags();
+        List<String> hashes = getListHashtagOfBuddy(buddy);
+        return this.buddyRepository.findByHashtagsHashIn(hashes);
+    }
 
-        for(Hashtag has : hashtags){
-            builder.or(QBuddy.buddy.hashtags.any().hash.contains(has.getHash()));
-        }
-        return Lists.newArrayList(this.buddyRepository.findAll(builder,getPageDefault("name")));
+    private List<String> getListHashtagOfBuddy(Buddy buddy){
+        List<Hashtag> hashtags = buddy.getHashtags();
+        List<String> hashes = new ArrayList<>();
+        hashtags.forEach(h -> hashes.add(h.getHash()));
+        return hashes;
     }
 
     @Override
@@ -144,9 +166,9 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
             return  buddies;
         }
         this.notifiSv.notificationListBuddy(buddy, buddies);
-        buddies.stream().forEach(bd -> bd.setDistance(getDistance(buddy.getLocation(),bd.getLocation())));
+        buddies.stream().forEach(bd -> bd.setDistance(getDistance(buddy.getLocation(), bd.getLocation())));
         buddies.sort((bd1, bd2) -> {
-            return (int)(bd1.getDistance() - bd2.getDistance());
+            return (int) (bd1.getDistance() - bd2.getDistance());
         });
         return buddies;
     }
@@ -154,22 +176,14 @@ public class BuddyServiceImpl  extends ModelServiceImpl<Buddy>  implements Buddy
     @Override
     public List<Buddy> getListBuddySameHashtag(Buddy buddy) {
         if(ArrayUtils.isEmpty(buddy.getLocation())){
-            List<Buddy> buddies = this.buddyRepository.findAll();
-            return buddies.stream().filter(bd -> {
-                return  !StringUtils.equals(bd.getToken(),buddy.getToken());
-            }).collect(Collectors.toList());
-            // return this.findByArrayHashtag(buddy);
-        }
-        StringBuffer hasBf = new StringBuffer();
-        for(Hashtag has : buddy.getHashtags()){
-            hasBf.append(has.getHash());
+            return this.findByArrayHashtag(buddy);
         }
 
         Buddy buddyData = this.findByToken(buddy.getToken());
-        List<Buddy> buddies = this.findByLocationWithin(buddy);
-        return buddies.stream().filter(bd -> {
-            return compareHashtag(hasBf.toString(), bd) && !StringUtils.equals(bd.getToken(),buddy.getToken());
-        }).collect(Collectors.toList());
+        DtoForPointAndDistance pointAndDistance = new DtoForPointAndDistance(buddy);
+        List<String> hashes = getListHashtagOfBuddy(buddy);
+        return this.buddyRepository.
+                findByLocationNearAndHashtagsHashIn(pointAndDistance.getPoint(), pointAndDistance.getDistance(), hashes);
     }
 
     private boolean compareHashtag(String hash,Buddy bd){

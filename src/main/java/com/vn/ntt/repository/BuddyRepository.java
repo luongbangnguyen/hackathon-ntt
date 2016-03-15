@@ -4,14 +4,13 @@ import com.vn.ntt.entity.Buddy;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 import java.util.List;
 
 /**
  * Created by bangnl on 3/9/2016.
  */
-public interface BuddyRepository extends MongoRepository<Buddy,String>, QueryDslPredicateExecutor<Buddy> {
+public interface BuddyRepository extends MongoRepository<Buddy,String>{
 
     /**
      * find location near a buddy
@@ -20,7 +19,7 @@ public interface BuddyRepository extends MongoRepository<Buddy,String>, QueryDsl
      * @param distance
      * @return
      */
-    List<Buddy> findByLocationNear(Point point, Distance distance);
+    List<Buddy> findByLocationNearAndHashtagsHashIn(Point point, Distance distance, List<String> hashes);
 
     /**
      * find buddy by token
@@ -29,5 +28,10 @@ public interface BuddyRepository extends MongoRepository<Buddy,String>, QueryDsl
      * @return
      */
     Buddy findByToken(String token);
+
+
+    List<Buddy> findByHashtagsHashIn(List<String> hashes);
+
+    List<Buddy> findByLocationNear(Point point, Distance distance);
 
 }

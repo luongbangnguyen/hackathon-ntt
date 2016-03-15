@@ -1,7 +1,5 @@
 package com.vn.ntt.service;
 
-import com.vn.ntt.entity.Hashtag;
-
 import java.util.List;
 
 /**

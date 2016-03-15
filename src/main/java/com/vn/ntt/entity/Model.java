@@ -9,6 +9,10 @@ import java.util.Date;
  */
 public class Model {
 
+    public Model(){
+        setLastUpTime(new Date());
+    }
+
     @Id
     private String id;
 

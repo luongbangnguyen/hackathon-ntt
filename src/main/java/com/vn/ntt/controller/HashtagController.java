@@ -1,6 +1,5 @@
 package com.vn.ntt.controller;
 
-import com.vn.ntt.entity.Hashtag;
 import com.vn.ntt.service.HashtagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
